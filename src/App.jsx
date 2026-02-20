@@ -1,42 +1,46 @@
-import React, { useState } from "react";
-import "./App.css";
+import { useState } from 'react';
+import { foods, filterItems } from './data.js';
 
-const COLORS = ["pink", "green", "blue", "yellow", "purple"];
+export default function FilterableList() {
+  const [query, setQuery] = useState('');
+  const updatedFoods = filterItems(foods, query)
 
-function App() {
-  const [backgroundColor, setBackgroundColor] = useState(COLORS[0]);
-  const [count, setCount] = useState(0)
-
-  const onButtonClick = (color) => () => {
-    setBackgroundColor(color);
-    setCount(count + 1)
-  };
+  function handleChange(e) {
+    setQuery(e.target.value);
+  }
 
   return (
-    <div
-      className="App"
-      style={{
-        backgroundColor,
-      }}
-    >
-      {COLORS.map((color) => (
-        <button
-          type="button"
-          key={color}
-          onClick={onButtonClick(color)}
-          className={backgroundColor === color ? "selected" : ""}
-        >
-          {color}
-        </button>
-        
-
-        
-      ))}
-      <div>
-        {count}
-      </div>
-    </div>
+    <>
+      <SearchBar query={query} onChange={handleChange} />
+      <hr />
+      <List items={updatedFoods} />
+    </>
   );
 }
 
-export default App;
+function SearchBar({query, onChange}) {
+  return (
+    <label>
+      Search:{' '}
+      <input
+        value={query}
+        onChange={onChange}
+      />
+    </label>
+  );
+}
+
+function List({ items }) {
+  return (
+    <table>
+      <tbody>
+        {items.map(food => (
+          <tr key={food.id}>
+            <td>{food.name}</td>
+            <td>{food.description}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
